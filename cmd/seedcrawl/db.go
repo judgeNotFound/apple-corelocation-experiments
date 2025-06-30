@@ -45,7 +45,7 @@ func (d *db) Add(s []lib.AP) {
 		if err != nil {
 			continue
 		}
-		_, err = tx.Exec("INSERT OR IGNORE INTO seeds (bssid, lat, lon) VALUES (?,?,?,?,?)", bssid, ap.Location.Lat, ap.Location.Long)
+		_, err = tx.Exec("INSERT OR IGNORE INTO seeds (bssid, lat, lon) VALUES (?,?,?)", bssid, ap.Location.Lat, ap.Location.Long)
 		if err != nil {
 			log.Println("Failed to insert into seeds ", bssid)
 			continue
