@@ -94,11 +94,12 @@ func Datafetcher(ctx context.Context, database *db, c <-chan Coordinate) {
 						return
 					}
 					log.Println("Something went from in tile call: ", err)
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(1000 * time.Millisecond)
 					continue outerLoop
 				}
 				log.Printf("\nFound %d access points at %f, %f\n", len(aps), lat, lon)
 				database.Add(aps)
+				time.Sleep(100 * time.Millisecond)
 				break outerLoop
 			}
 		}

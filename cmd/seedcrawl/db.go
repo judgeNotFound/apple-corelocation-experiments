@@ -6,7 +6,6 @@ import (
 	"log"
 	"sync"
 	"wloc/lib"
-	"wloc/lib/mac"
 
 	_ "modernc.org/sqlite"
 )
@@ -22,7 +21,7 @@ func InitDatabase() db {
 		panic(fmt.Errorf("Failed to open database: %w", err))
 	}
 	if _, err := d.Exec(`CREATE TABLE IF NOT EXISTS seeds (
-			bssid INTEGER PRIMARY KEY,
+			bssid TEXT PRIMARY KEY,
 			lat REAL NOT NULL,
 			lon REAL NOT NULL
 		)
@@ -41,13 +40,9 @@ func (d *db) Add(s []lib.AP) {
 	}
 
 	for _, ap := range s {
-		bssid, err := mac.Encode(ap.BSSID)
+		_, err = tx.Exec("INSERT OR IGNORE INTO seeds (bssid, lat, lon) VALUES (?,?,?)", ap.BSSID, ap.Location.Lat, ap.Location.Long)
 		if err != nil {
-			continue
-		}
-		_, err = tx.Exec("INSERT OR IGNORE INTO seeds (bssid, lat, lon) VALUES (?,?,?)", bssid, ap.Location.Lat, ap.Location.Long)
-		if err != nil {
-			log.Println("Failed to insert into seeds ", bssid)
+			log.Println("Failed to insert into seeds ", ap.BSSID)
 			continue
 		}
 	}
